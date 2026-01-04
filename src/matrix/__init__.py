@@ -44,9 +44,6 @@ class Row:
     def __setitem__(self, key, value) -> None:
         return self._vals.__setitem__(key, value)
 
-    def __delitem__(self, key) -> None:
-        return self._vals.__delitem__(key)
-
     def __mul__(self, other) -> Self:
         if not isinstance(other, (int, float, complex, Fraction)):
             raise TypeError("Expected a scalar, got " + type(other).__name__)
