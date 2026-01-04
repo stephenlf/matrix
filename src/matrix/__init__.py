@@ -65,6 +65,13 @@ class Row:
     def __copy__(self) -> Self:
         return self.__class__(copy(self._vals))
 
+    def __eq__(self, value: object, /) -> bool:
+        return (
+            isinstance(value, self.__class__)
+            and len(self._vals) == len(value._vals)
+            and all(self._vals[i] == value._vals[i] for i in range(len(self._vals)))
+        )
+
 
 class Matrix:
     _rows: list[Row]
@@ -114,6 +121,13 @@ class Matrix:
         if not isinstance(other, (int, float, complex, Fraction)):
             raise TypeError("Expected a scalar, got " + type(other).__name__)
         return Matrix([row.__mul__(other) for row in self._rows])
+
+    def __eq__(self, value: object, /) -> bool:
+        return (
+            isinstance(value, self.__class__)
+            and len(self._rows) == len(value._rows)
+            and all(self._rows[i] == value._rows[i] for i in range(len(self._rows)))
+        )
 
     def __floordiv__(self, other):
         if not isinstance(other, (int, float, complex, Fraction)):
