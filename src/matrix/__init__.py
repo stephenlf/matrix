@@ -1,19 +1,18 @@
 from dataclasses import dataclass
+from copy import copy
 from typing import Collection, Self
 from fractions import Fraction
 
 
 type Scalar = int | float | complex | Fraction
 
-from copy import copy
-
 
 @dataclass
 class Row:
     _vals: list[Scalar]
 
-    def __add__(self, other) -> Row:
-        if not isinstance(other, Row):
+    def __add__(self, other) -> Self:
+        if not isinstance(other, self.__class__):
             raise TypeError(
                 "Rowwise addition has not been implemented for values of type "
                 + type(other).__name__
@@ -22,7 +21,7 @@ class Row:
         if width != len(other._vals):
             raise ValueError("Cannot sum rows of different lengths")
 
-        return Row([self._vals[i] + other._vals[i] for i in range(width)])
+        return self.__class__([self._vals[i] + other._vals[i] for i in range(width)])
 
     def __init__(
         self,
@@ -48,13 +47,23 @@ class Row:
     def __delitem__(self, key) -> None:
         return self._vals.__delitem__(key)
 
-    def __mul__(self, other) -> Row:
+    def __mul__(self, other) -> Self:
         if not isinstance(other, (int, float, complex, Fraction)):
             raise TypeError("Expected a scalar, got " + type(other).__name__)
-        return Row([val * other for val in self._vals])
+        return self.__class__([val * other for val in self._vals])
 
-    def __copy__(self) -> Row:
-        return Row(copy(self._vals))
+    def __floordiv__(self, other) -> Self:
+        if not isinstance(other, (int, float, complex, Fraction)):
+            raise TypeError("Expected a scalar, got " + type(other).__name__)
+        return self.__floordiv__([val * other for val in self._vals])
+
+    def __truediv__(self, other) -> Self:
+        if not isinstance(other, (int, float, complex, Fraction)):
+            raise TypeError("Expected a scalar, got " + type(other).__name__)
+        return self.__truediv__([val * other for val in self._vals])
+
+    def __copy__(self) -> Self:
+        return self.__class__(copy(self._vals))
 
 
 class Matrix:
@@ -95,7 +104,7 @@ class Matrix:
     def __getitem__(self, key) -> Row:
         return copy(self._rows.__getitem__(key))
 
-    def __setitem__(self, key, value) -> Row:
+    def __setitem__(self, key, value) -> None:
         return self._rows.__setitem__(key, value)
 
     def __delitem__(self, key):
@@ -105,3 +114,13 @@ class Matrix:
         if not isinstance(other, (int, float, complex, Fraction)):
             raise TypeError("Expected a scalar, got " + type(other).__name__)
         return Matrix([row.__mul__(other) for row in self._rows])
+
+    def __floordiv__(self, other):
+        if not isinstance(other, (int, float, complex, Fraction)):
+            raise TypeError("Expected a scalar, got " + type(other).__name__)
+        return Matrix([row.__floordiv__(other) for row in self._rows])
+
+    def __truediv__(self, other):
+        if not isinstance(other, (int, float, complex, Fraction)):
+            raise TypeError("Expected a scalar, got " + type(other).__name__)
+        return Matrix([row.__truediv__(other) for row in self._rows])
