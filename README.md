@@ -6,6 +6,7 @@ This library is meant as a pedagogical tool in my linear algebra studies. It han
 
 ## Usage
 
+Instantiate from list of lists
 ```python
 from matrix import Matrix
 from fractions import Fraction
@@ -19,15 +20,21 @@ from fractions import Fraction
 │ 1       10  2.4 │
 │ (2+4j)  0   3/4 │
 
+```
+
+Row-wise arithmetic
+```python
 >>> m.append(m[0] + (m[1] * 2))
 >>> print(m)
 │ 1       10  2.4 │
 │ (2+4j)  0   3/4 │
 │ (5+8j)  10  3.9 │
+```
 
+Scalar operations
+```python
 >>> print(m * 0.5)
 │ 0.5       5.0  1.2   │
 │ (1+2j)    0.0  0.375 │
 │ (2.5+4j)  5.0  1.95  │
-```
 ```
