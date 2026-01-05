@@ -1,5 +1,5 @@
 from fractions import Fraction
-from matrix import Matrix, Row
+from matrix import Row
 
 
 def test_init_int_row():
@@ -74,9 +74,11 @@ def test_mul_scalar_row():
 
 def test_floordiv_row():
     r1 = Row([5])
-    r2 = r1 // 2
+    r2 = r1.__floordiv__(2)
+    r3 = r1 // 2
     assert r1 == Row([5]), "Self unchanged"
     assert r2 == Row([2])
+    assert r3 == Row([2])
 
 
 def test_truediv_row():

@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from copy import copy
-from typing import Collection, Self
+from typing import Collection, NoReturn, Self, overload
 from fractions import Fraction
 
 
@@ -49,15 +49,15 @@ class Row:
             raise TypeError("Expected a scalar, got " + type(other).__name__)
         return self.__class__([val * other for val in self._vals])
 
-    def __floordiv__(self, other) -> Self:
+    def __floordiv__(self, other: Scalar) -> Self:
         if not isinstance(other, (int, float, complex, Fraction)):
             raise TypeError("Expected a scalar, got " + type(other).__name__)
-        return self.__floordiv__([val * other for val in self._vals])
+        return self.__class__([val.__floordiv__(other) for val in self._vals])
 
-    def __truediv__(self, other) -> Self:
+    def __truediv__(self, other: Scalar) -> Self:
         if not isinstance(other, (int, float, complex, Fraction)):
             raise TypeError("Expected a scalar, got " + type(other).__name__)
-        return self.__truediv__([val * other for val in self._vals])
+        return self.__class__([val.__truediv__(other) for val in self._vals])
 
     def __copy__(self) -> Self:
         return self.__class__(copy(self._vals))
